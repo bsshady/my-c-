@@ -64,20 +64,19 @@ int main() {
     std::cout << std::endl;
     X=abs(X);
     int sameX=X;
-    int minDigit = pow(10,9);
+    int minDigit = 9;
     while (X > 0) {
-        int digit = X;
-        if (digit != 0 && digit != 7 && digit < minDigit) {
-            minDigit = digit;
-            digit=digit%10;
+        int digit = X%10;
+        if (digit != 0 && digit != 7) {
+            minDigit=std::min(minDigit, digit);
         }
         X /= 10;
     }
 
-    if (minDigit != pow(10,9)) {
-        std::cout << "Наименьшая цифра, отличная от 0 и 7: " << minDigit << std::endl;
-    } else {
+    if (minDigit ==9) {
         std::cout << "В числе нет цифр, отличных от 0 и 7." << std::endl;
+    } else {
+        std::cout << "Наименьшая цифра, отличная от 0 и 7: " << minDigit << std::endl;
     }
 
     int mostNumCount = -1; // Наиболее часто встречающаяся цифра

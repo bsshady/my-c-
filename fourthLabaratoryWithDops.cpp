@@ -2,61 +2,78 @@
 #include <climits>
 #include <cmath>
 
-int main() {
+// Функция для ввода числа N
+int getInputN() {
     int N;
     std::cout << "Введите количество чисел в последовательности: ";
     std::cin >> N;
+    return N;
+}
 
-    std::cout << std::endl;
+// Функция для ввода последовательности чисел
+void getInputSequence(int N, int sequence[]) {
+    for (int i = 0; i < N; i++) {
+        std::cout << "Введите число №" << (i + 1) << ": ";
+        std::cin >> sequence[i];
+    }
+}
 
-    int sum = 0;
-    int max = INT_MIN;
-    int maxIndex = -1;
-    int sumEvenOdd = 0;
+// Функция для вычисления суммы четных чисел и нахождения наибольшего четного числа
+void calculateSumAndMax(int N, int sequence[], int& sum, int& max, int& maxIndex) {
+    sum = 0;
+    max = INT_MIN;
+    maxIndex = 0;
     
     for (int i = 0; i < N; i++) {
-        int num;
-        std::cout << "Введите число №" << (i + 1) << ": ";
-        std::cin >> num;
+        int num = sequence[i];
 
-        // Найти сумму четных чисел
-        if (num % 2 == 0) {
+        if (num != 0 && num % 2 == 0) {
             sum += num;
 
-            // Найти наибольшее четное число и его индекс
-            if (num > max) {
+            if (num > max && num != 0) {
                 max = num;
                 maxIndex = i + 1;
             }
         }
-        if (i % 2 == 0 && num != 0) {
+    }
+}
+
+// Функция для вычисления суммы чисел на четных и нечетных позициях
+int calculateSumEvenOdd(int N, int sequence[]) {
+    int sumEvenOdd = 0;
+
+    for (int i = 0; i < N; i++) {
+        int num = sequence[i];
+
+        if (num != 0 && i % 2 == 0) {
             sumEvenOdd += num;
-            std::cout << sumEvenOdd << std::endl;
-        } else if (i % 2 != 0 && num != 0) {
+        } else if (num != 0 && i % 2 != 0) {
             sumEvenOdd -= num;
-            std::cout << sumEvenOdd << std::endl;
-        } else {
-            std::cout << "Ошибка при вычислении" << std::endl;
         }
     }
-    std::cout << std::endl;
 
-    std::cout << "Сумма всех четных чисел: " << sum << std::endl;
-    std::cout << "Вычтенная сумма всех чисел стоящих на нечетных позициях от суммы стоящей на четных: " << sumEvenOdd << std::endl;
-    std::cout << std::endl;
-    if (maxIndex != -1) {
-        std::cout << "Наибольшее четное число: " << max << " (номер " << maxIndex << ")" << std::endl;
-    } else {
-        std::cout << "В последовательности нет четных чисел." << std::endl;
+    return sumEvenOdd;
+}
+
+// Функция для вычисления наименьшей цифры отличной от 0 и 7 в числе X
+int findMinDigit(int X) {
+    X = abs(X);
+    int minDigit = 9;
+
+    while (X > 0) {
+        int digit = X % 10;
+        if (digit != 0 && digit != 7) {
+            minDigit = std::min(minDigit, digit);
+        }
+        X /= 10;
     }
 
-    std::cout << std::endl;
-    
-    int X;
-    std::cout << "Введите целое число X: ";
-    std::cin >> X;
+    return minDigit;
+}
 
-    int mostFrequentDigit = -1; // Наиболее часто встречающаяся цифра
+// Функция для нахождения наиболее часто встречающейся цифры
+int findMostFrequentDigit(int X) {
+    int mostNumCount = -1; // Наиболее часто встречающаяся цифра
     int maxCount = 0; // Максимальное количество повторений
 
     for (int digit = 0; digit <= 9; digit++) {
@@ -66,30 +83,63 @@ int main() {
         while (tempX > 0) {
             if (tempX % 10 == digit) {
                 count++;
+            }
             tempX /= 10;
         }
 
         if (count > maxCount) {
             maxCount = count;
-            mostFrequentDigit = digit;
+            mostNumCount = digit;
         }
     }
 
-    if (mostFrequentDigit != -1) {
-        std::cout << "Наиболее часто встречающаяся цифра в числе X: " << mostFrequentDigit << std::endl;
+    return mostNumCount;
+}
+
+int main() {
+    int N = getInputN();
+
+    if (N <= 0) {
+        std::cout << "Сумма равна 0" << std::endl;
+        return 0;
+    }
+
+    int sequence[N];
+    getInputSequence(N, sequence);
+
+    int sum, max, maxIndex;
+    calculateSumAndMax(N, sequence, sum, max, maxIndex);
+
+    int sumEvenOdd = calculateSumEvenOdd(N, sequence);
+
+    std::cout << "Сумма всех четных чисел: " << sum << std::endl;
+    std::cout << "Вычтенная сумма всех чисел стоящих на нечетных позициях от суммы стоящей на четных: " << sumEvenOdd << std::endl;
+
+    if (maxIndex != 0) {
+        std::cout << "Наибольшее четное число: " << max << " (номер " << maxIndex << ")" << std::endl;
+    } else {
+        std::cout << "В последовательности нет четных чисел." << std::endl;
+    }
+
+    int X;
+    std::cout << "Введите целое число X: ";
+    std::cin >> X;
+
+    int minDigit = findMinDigit(X);
+
+    if (minDigit == 9) {
+        std::cout << "В числе нет цифр, отличных от 0 и 7." << std::endl;
+    } else {
+        std::cout << "Наименьшая цифра, отличная от 0 и 7: " << minDigit << std::endl;
+    }
+
+    int mostNumCount = findMostFrequentDigit(X);
+
+    if (mostNumCount != -1) {
+        std::cout << "Наиболее часто встречающаяся цифра в числе X: " << mostNumCount << std::endl;
     } else {
         std::cout << "В числе нет цифр." << std::endl;
     }
 
     return 0;
 }
-}
-// #include <iostream>
-
-// int main() {
-//     int X;
-//     std::cout << "Введите целое число X: ";
-//     std::cin >> X;
-
-//     return 0;
-// }
